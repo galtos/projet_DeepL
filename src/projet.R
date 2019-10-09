@@ -16,10 +16,12 @@ names_steroid_list = names_steroid_list[-which(names_steroid_list == "")]
 prct_struct_control = 0.05 #1947 structures
 prct_struct_heme = 0.1 #597 structures
 prct_struct_nucleotide = 0.1 #1554 structures
-prct_struct_steroid = 0 #70 structures
+prct_struct_steroid = 1 #70 structures
 #
 prct_train = 2/3
 prct_test = 1/3
+#
+set.seed(61565)
 #
 Index_control_train = sample(1:length(names_control_list),size = length(names_control_list)*prct_train*prct_struct_control )
 Index_heme_train = sample(1:length(names_heme_list),size = length(names_heme_list)*prct_train*prct_struct_heme )
@@ -87,6 +89,24 @@ for (i in 1:n_struct_test) {
 }
 #### MODEL ####
 #attention à mettre - data_format='channels_first' - partout
+#model 1 - model article
+model = keras_model_sequential()
+
+layer_conv_3d(model, filters = 64 , kernel_size = 5, activation = "relu", input_shape = c(14,32,32,32), data_format='channels_first')
+layer_dropout(model, 0.2)
+
+layer_conv_3d(model, filters = 64 , kernel_size = 3, activation = "relu", data_format='channels_first')
+
+layer_max_pooling_3d(model, pool_size = c(2,2,2), data_format='channels_first')
+layer_dropout(model, 0.4)
+
+layer_flatten(model)
+
+layer_dense(model, units = 128, activation = "relu")
+layer_dropout(model, 0.4)
+layer_dense(model, units = 4, activation = "softmax")
+#
+#modele perso :
 model = keras_model_sequential()
 
 layer_conv_3d(model, filters = 32 , kernel_size = c(3,3,3), activation = "relu", input_shape = c(14,32,32,32), data_format='channels_first')
@@ -121,15 +141,23 @@ test = factor(max.col(y_test), 1:4)
 TableTot = table(pred, test)
 
 accuracy = sum(diag(TableTot))/sum(TableTot)
-accuracy
+print(accuracy)
 
 ## ROC CURVE ##
-
+library(gplots)
+library(ROCR)
+dt.pred = prediction(model_predict_test, y_test)
+dt.perf = performance(dt.pred, "tpr", "fpr")
+plot(dt.perf,col = "black")
+title("Courbe Roc des modèle en Validation")
+dt.auc = performance(dt.pred, "auc")
+attr(dt.auc, "y.values")
+abline(0,1)  
 
 ####save model####
-save_model_hdf5(model, "model_test_1.h5")
+save_model_hdf5(model, "model_test_3.h5")
 ####test vrai model####
-model = load_model_hdf5("deepdrug3d.h5")
+#model = load_model_hdf5("deepdrug3d.h5")
 
 
 
