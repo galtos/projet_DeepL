@@ -106,7 +106,7 @@ layer_dense(model, units = 128, activation = "relu")
 layer_dropout(model, 0.4)
 layer_dense(model, units = 4, activation = "softmax")
 #
-#modele perso :
+#modele 2 perso :
 model = keras_model_sequential()
 
 layer_conv_3d(model, filters = 32 , kernel_size = c(3,3,3), activation = "relu", input_shape = c(14,32,32,32), data_format='channels_first')
@@ -122,8 +122,36 @@ layer_flatten(model)
 
 layer_dense(model, units = 4, activation = "softmax")
 #
+#modele 3 
+input = layer_input(shape = c(14,32,32,32))
+output = layer_conv_3d(input, filters = 8, kernel_size = c(3,3,3), padding = "same", 
+                           activation = "relu", kernel_initializer = "he_normal", data_format='channels_first')
+for(i in 1:4){
+  save = output
+  if(save$shape[-1] != 8){
+    output = layer_conv_3d(output, filters = 8, kernel_size = c(3,3,3), padding = "same", 
+                           activation = "relu", kernel_initializer = "he_normal", data_format='channels_first')
+  }
+  output1 = layer_conv_3d(output, filters = 4, kernel_size = c(3,3,3), activation = "relu",
+                          padding = "same", kernel_initializer = "he_normal", data_format='channels_first')
+  output2 = layer_conv_3d(output1, filters = 8, kernel_size = c(3,3,3), activation = "linear",
+                          padding = "same", kernel_initializer = "he_normal", data_format='channels_first')
+  conc = layer_add(inputs = list(output2, save))
+  activ = layer_activation(conc, activation = "relu")
+  output = activ
+}
+mod = output
+
+model_max1 = layer_max_pooling_3d(mod, pool_size = c(3,3,3), data_format='channels_first') 
+model_drop1 = layer_dropout(model_max1, 0.4)
+model_flatten1 = layer_flatten(model_drop1)
+model_dense1 = layer_dense(model_flatten1, units = 4, activation = "softmax")
+
+model = keras_model(inputs = input, outputs = model_dense1)
+
+#
 compile(model,loss = 'categorical_crossentropy',optimizer = optimizer_adam(), metrics = "accuracy")
-history = fit(model, x_train, y_train, epochs = 20, batch_size = 32, validation_split = 0.3)
+history = fit(model, x_train, y_train, epochs = 10, batch_size = 32, validation_split = 0.3)
 evaluate(model, x_test, y_test)
 plot(history)
 ####
@@ -148,14 +176,14 @@ library(gplots)
 library(ROCR)
 dt.pred = prediction(model_predict_test, y_test)
 dt.perf = performance(dt.pred, "tpr", "fpr")
-plot(dt.perf,col = "black")
+plot(dt.perf)
 title("Courbe Roc des modèle en Validation")
 dt.auc = performance(dt.pred, "auc")
 attr(dt.auc, "y.values")
 abline(0,1)  
 
 ####save model####
-save_model_hdf5(model, "model_test_3.h5")
+save_model_hdf5(model, "model_test_5.h5")
 ####test vrai model####
 #model = load_model_hdf5("deepdrug3d.h5")
 
