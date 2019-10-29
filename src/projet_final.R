@@ -156,18 +156,30 @@ plot(history)
 ####
 #### Performances on test####
 #
-model_accuracy = function(model, x_test, y_test){
-  print("Accuracy du modèle sur test")
-  print(evaluate(model, x_test, y_test))
+model_accuracy = function(model, x_test, y_test, names_test){
+  cat("Accuracy :")
+  cat(evaluate(model, x_test, y_test))
+  
   model_predict_test  = predict(model, x_test)
-  print("predict")
   model_predict_test_val = NULL
   model_predict_test_val = max.col(model_predict_test)
   pred = factor(model_predict_test_val, 1:3)
   test = factor(max.col(y_test), 1:3)
   TableTot = table(pred, test)
-  print("Table")
-  print(TableTot)
+  
+  cat("Table :")
+  cat(TableTot)
+  cat("List of pockets badly predicted :")
+  cat("Classes :")
+  cat("1 : control pockets")
+  cat("2 : nucleotide-binding pockets")
+  cat("3 : heme-binding pockets")
+  cat("Pockets Predicted Reality")
+  for (i in 1:length(pred)) {
+    if(pred[i] != test[i]){
+      cat(">", pred[i], test[i])
+    }
+  }
 }
 model_negativ_test = function(model, names_steroid_list){
   x_test = array(data = NA, dim = c(length(names_steroid_list), 14, 32, 32, 32))
@@ -183,37 +195,39 @@ model_ROC_curve = function(model, x_test, y_test){
   model_predict_test  = predict(model, x_test)
   
   n <- 3 # you have n models
-  colors <- c('red', 'blue',"yellow") # 2 colors
+  color_style <- c('red', 'blue',"green") # 2 colors
   for (i in 1:n) {
     plot(performance(prediction(model_predict_test[,i],y_test[,i]),"tpr","fpr"), 
-         add=(i!=1),col=colors[i],lwd=2)
+         add=(i!=1),col=colors[i],lwd=2, cex.lab=1.5)
   }
   title("ROC curve on validation data set")
   dt.auc = performance(prediction(model_predict_test,y_test), "auc")
   abline(0,1)
-  legend( "bottomright", c("control pockets", "nucleotide-binding pockets", "heme-binding pockets"), 
-          text.col=c("red", "blue", "yellow") )
-  
-  print(attr(dt.auc, "y.values"))
+  legend("bottomright", c("control pockets", "nucleotide-binding pockets", "heme-binding pockets"), 
+          col=color_style, lty=c(1,1,1), cex=0.8)
+  cat("----AUC VALUES OF THE MODEL----")
+  cat(attr(dt.auc, "y.values"))
 }
 #### Tests ####
-model = load_model_hdf5("../results/final_2.h5")
+#model = load_model_hdf5("../results/final_2.h5")
 #accuracy on control negatif steroid
-x_test_steroid  = model_negativ_test(model, names_steroid_list)
 
+x_test_steroid  = model_negativ_test(model, names_steroid_list)
 categories = c(rep(0,length(names_steroid_list)))
 y_test_steroid = to_categorical(categories,3)
 
 #modele1
-#sink("../results/model_test_model1.txt")
 
-model_accuracy(model, x_test, y_test)
-print("test on steroid")
+sink("../results/model_test_model1.txt")
+
+model_accuracy(model, x_test, y_test, names_test)
+print("---NEGATIVE CONTROL FOR THE STEROIDS---")
 model_accuracy(model, x_test_steroid, y_test_steroid)
+
 jpeg("../results/final_3_roc.jpeg") 
 model_ROC_curve(model, x_test, y_test)
 dev.off()
-#sink()
+sink()
 save_model_hdf5(model, "../results/final_3.h5")
 
 
