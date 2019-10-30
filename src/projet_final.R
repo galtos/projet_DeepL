@@ -1,4 +1,4 @@
-#prject DEEP LEARNING#
+#DEEP LEARNING project#
 library(reticulate)
 library(keras)
 np = import("numpy")
@@ -89,31 +89,23 @@ for (i in 1:n_struct_test) {
 }
 #### MODEL ####
 #model 1 - model article
-model = keras_model_sequential()
-
-layer_conv_3d(model, filters = 64 , kernel_size = 5, activation = "relu", input_shape = c(14,32,32,32), data_format='channels_first')
-layer_dropout(model, 0.2)
-
-layer_conv_3d(model, filters = 64 , kernel_size = 3, activation = "relu", data_format='channels_first')
-
-layer_max_pooling_3d(model, pool_size = c(2,2,2), data_format='channels_first')
-layer_dropout(model, 0.4)
-
-layer_flatten(model)
-
-layer_dense(model, units = 128, activation = "relu")
-layer_dropout(model, 0.4)
-layer_dense(model, units = 3, activation = "softmax")
+#model = keras_model_sequential()
+#layer_conv_3d(model, filters = 64 , kernel_size = 5, activation = "relu", input_shape = c(14,32,32,32), data_format='channels_first')
+#layer_dropout(model, 0.2)
+#layer_conv_3d(model, filters = 64 , kernel_size = 3, activation = "relu", data_format='channels_first')
+#layer_max_pooling_3d(model, pool_size = c(2,2,2), data_format='channels_first')
+#layer_dropout(model, 0.4)
+#layer_flatten(model)
+#layer_dense(model, units = 128, activation = "relu")
+#layer_dropout(model, 0.4)
+#layer_dense(model, units = 3, activation = "softmax")
 #
 #modele 2 perso :
 model = keras_model_sequential()
-
 layer_conv_3d(model, filters = 32 , kernel_size = c(3,3,3), activation = "relu", input_shape = c(14,32,32,32), data_format='channels_first')
 layer_conv_3d(model, filters = 64 , kernel_size = c(3,3,3), activation = "relu", data_format='channels_first')
-
 layer_conv_3d(model, filters = 128 , kernel_size = c(3,3,3), activation = "relu", data_format='channels_first')
 layer_max_pooling_3d(model, pool_size = c(3,3,3), data_format='channels_first')
-
 layer_dropout(model, 0.2)
 layer_max_pooling_3d(model, pool_size = c(3,3,3), data_format='channels_first') 
 layer_dropout(model, 0.4)
@@ -122,31 +114,29 @@ layer_flatten(model)
 layer_dense(model, units = 3, activation = "softmax")
 #
 #modele 3 
-input = layer_input(shape = c(14,32,32,32))
-output = layer_conv_3d(input, filters = 8, kernel_size = c(3,3,3), padding = "same", 
-                           activation = "relu", kernel_initializer = "he_normal", data_format='channels_first')
-for(i in 1:2){
-  save = output
-  if(save$shape[-1] != 8){
-    output = layer_conv_3d(output, filters = 8, kernel_size = c(3,3,3), padding = "same", 
-                           activation = "relu", kernel_initializer = "he_normal", data_format='channels_first')
-  }
-  output1 = layer_conv_3d(output, filters = 4, kernel_size = c(3,3,3), activation = "relu",
-                          padding = "same", kernel_initializer = "he_normal", data_format='channels_first')
-  output2 = layer_conv_3d(output1, filters = 8, kernel_size = c(3,3,3), activation = "linear",
-                          padding = "same", kernel_initializer = "he_normal", data_format='channels_first')
-  conc = layer_add(inputs = list(output2, save))
-  activ = layer_activation(conc, activation = "relu")
-  output = activ
-}
-mod = output
-
-model_max1 = layer_max_pooling_3d(mod, pool_size = c(3,3,3), data_format='channels_first') 
-model_drop1 = layer_dropout(model_max1, 0.4)
-model_flatten1 = layer_flatten(model_drop1)
-model_dense1 = layer_dense(model_flatten1, units = 3, activation = "softmax")
-
-model = keras_model(inputs = input, outputs = model_dense1)
+#input = layer_input(shape = c(14,32,32,32))
+#output = layer_conv_3d(input, filters = 8, kernel_size = c(3,3,3), padding = "same", 
+#                           activation = "relu", kernel_initializer = "he_normal", data_format='channels_first')
+#for(i in 1:2){
+#  save = output
+#  if(save$shape[-1] != 8){
+#    output = layer_conv_3d(output, filters = 8, kernel_size = c(3,3,3), padding = "same", 
+#                           activation = "relu", kernel_initializer = "he_normal", data_format='channels_first')
+#  }
+#  output1 = layer_conv_3d(output, filters = 4, kernel_size = c(3,3,3), activation = "relu",
+#                          padding = "same", kernel_initializer = "he_normal", data_format='channels_first')
+#  output2 = layer_conv_3d(output1, filters = 8, kernel_size = c(3,3,3), activation = "linear",
+#                          padding = "same", kernel_initializer = "he_normal", data_format='channels_first')
+#  conc = layer_add(inputs = list(output2, save))
+#  activ = layer_activation(conc, activation = "relu")
+#  output = activ
+#}
+#mod = output
+#model_max1 = layer_max_pooling_3d(mod, pool_size = c(3,3,3), data_format='channels_first') 
+#model_drop1 = layer_dropout(model_max1, 0.4)
+#model_flatten1 = layer_flatten(model_drop1)
+#model_dense1 = layer_dense(model_flatten1, units = 3, activation = "softmax")
+#model = keras_model(inputs = input, outputs = model_dense1)
 #
 
 compile(model,loss = 'categorical_crossentropy',optimizer = optimizer_adam(), metrics = "accuracy")
@@ -157,8 +147,8 @@ plot(history)
 #### Performances on test####
 #
 model_accuracy = function(model, x_test, y_test, names_test){
-  cat("Accuracy :")
-  cat(evaluate(model, x_test, y_test))
+  cat("Accuracy :","\n")
+  print(evaluate(model, x_test, y_test))
   
   model_predict_test  = predict(model, x_test)
   model_predict_test_val = NULL
@@ -167,17 +157,17 @@ model_accuracy = function(model, x_test, y_test, names_test){
   test = factor(max.col(y_test), 1:3)
   TableTot = table(pred, test)
   
-  cat("Table :")
-  cat(TableTot)
-  cat("List of pockets badly predicted :")
-  cat("Classes :")
-  cat("1 : control pockets")
-  cat("2 : nucleotide-binding pockets")
-  cat("3 : heme-binding pockets")
-  cat("Pockets Predicted Reality")
+  cat("Table :","\n")
+  cat(TableTot,"\n")
+  cat("List of pockets badly predicted :","\n")
+  cat("Classes :","\n")
+  cat("1 : control pockets","\n")
+  cat("2 : nucleotide-binding pockets","\n")
+  cat("3 : heme-binding pockets","\n")
+  cat("Pockets Predicted Reality","\n")
   for (i in 1:length(pred)) {
     if(pred[i] != test[i]){
-      cat(">", pred[i], test[i])
+      cat(">", names_test[i], pred[i], test[i],"\n")
     }
   }
 }
@@ -198,7 +188,7 @@ model_ROC_curve = function(model, x_test, y_test){
   color_style <- c('red', 'blue',"green") # 2 colors
   for (i in 1:n) {
     plot(performance(prediction(model_predict_test[,i],y_test[,i]),"tpr","fpr"), 
-         add=(i!=1),col=colors[i],lwd=2, cex.lab=1.5)
+         add=(i!=1),col=color_style[i],lwd=2, cex.lab=1.5)
   }
   title("ROC curve on validation data set")
   dt.auc = performance(prediction(model_predict_test,y_test), "auc")
@@ -206,29 +196,26 @@ model_ROC_curve = function(model, x_test, y_test){
   legend("bottomright", c("control pockets", "nucleotide-binding pockets", "heme-binding pockets"), 
           col=color_style, lty=c(1,1,1), cex=0.8)
   cat("----AUC VALUES OF THE MODEL----")
-  cat(attr(dt.auc, "y.values"))
+  print(attr(dt.auc, "y.values"))
 }
 #### Tests ####
-#model = load_model_hdf5("../results/final_2.h5")
-#accuracy on control negatif steroid
 
+#
 x_test_steroid  = model_negativ_test(model, names_steroid_list)
 categories = c(rep(0,length(names_steroid_list)))
 y_test_steroid = to_categorical(categories,3)
 
-#modele1
-
-sink("../results/model_test_model1.txt")
-
+#
+#model = load_model_hdf5("../results/final_2.h5")
+sink("../results/final_2.txt")
 model_accuracy(model, x_test, y_test, names_test)
 print("---NEGATIVE CONTROL FOR THE STEROIDS---")
 model_accuracy(model, x_test_steroid, y_test_steroid)
-
-jpeg("../results/final_3_roc.jpeg") 
+jpeg("../results/final_2_roc.jpeg") 
 model_ROC_curve(model, x_test, y_test)
 dev.off()
 sink()
-save_model_hdf5(model, "../results/final_3.h5")
+save_model_hdf5(model, "../results/model.h5")
 
 
 

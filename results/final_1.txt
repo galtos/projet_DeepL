@@ -1,0 +1,68 @@
+Accuracy : 
+$loss
+[1] 0.4581919
+
+$acc
+[1] 0.8311688
+
+Table : 
+31 0 0 1 32 1 7 17 65 
+List of pockets badly predicted : 
+Classes : 
+1 : control pockets 
+2 : nucleotide-binding pockets 
+3 : heme-binding pockets 
+Pockets Predicted Reality 
+> 4lmsA00 1 2 
+> 1j77A00 3 2 
+> 3a4lB00 1 3 
+> 4y8vC00 1 3 
+> 1nktB00 2 3 
+> 4v94A00 1 3 
+> 4hutA00 2 3 
+> 2jjxB01 1 3 
+> 2p5sB00 1 3 
+> 1ny5B00 2 3 
+> 2e87A00 1 3 
+> 3siwA00 2 3 
+> 4r39A00 2 3 
+> 4ww4B00 2 3 
+> 1b8aB00 2 3 
+> 4yplB00 2 3 
+> 3tk1A00 2 3 
+> 2xszF00 2 3 
+> 1t8eC00 2 3 
+> 3iewA01 2 3 
+> 2jlgC01 2 3 
+> 2wqeA02 2 3 
+> 3rq6A01 2 3 
+> 1jwaA00 1 3 
+> 1v34A00 2 3 
+> 3pyzA00 2 3 
+[1] "---NEGATIVE CONTROL FOR THE STEROIDS---"
+Accuracy : 
+$loss
+[1] 0.08137643
+
+$acc
+[1] 1
+
+Table : 
+69 0 0 0 0 0 0 0 0 
+List of pockets badly predicted : 
+Classes : 
+1 : control pockets 
+2 : nucleotide-binding pockets 
+3 : heme-binding pockets 
+Pockets Predicted Reality 
+----AUC VALUES OF THE MODEL----[[1]]
+[1] 0.9968529
+
+[[2]]
+[1] 0.9571078
+
+[[3]]
+[1] 0.9649092
+
+null device 
+          1 
